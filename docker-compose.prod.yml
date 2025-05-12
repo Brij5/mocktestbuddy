@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    container_name: exam-buddy-frontend-prod
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - exam-buddy-net
+
+  backend:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    container_name: exam-buddy-backend-prod
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/exam-buddy-prod
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      - mongo
+    networks:
+      - exam-buddy-net
+
+  mongo:
+    image: mongo:6.0
+    container_name: exam-buddy-mongodb-prod
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=exam-buddy-prod
+    volumes:
+      - mongodb_data_prod:/data/db
+    networks:
+      - exam-buddy-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: exam-buddy-nginx-prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+      - ./docker/nginx/logs:/var/log/nginx
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - exam-buddy-net
+
+networks:
+  exam-buddy-net:
+    driver: bridge
+
+volumes:
+  mongodb_data_prod:

@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # Frontend Service
+  frontend:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+      target: builder
+    container_name: exam-buddy-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:5000/api
+    depends_on:
+      - backend
+    networks:
+      - exam-buddy-net
+
+  # Backend Service
+  backend:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+      target: builder
+    container_name: exam-buddy-backend-dev
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+      - ./server/uploads:/app/uploads
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo:27017/exam-buddy-dev
+      - JWT_SECRET=dev_jwt_secret
+      - PORT=5000
+    depends_on:
+      - mongo
+    networks:
+      - exam-buddy-net
+
+  # MongoDB Service
+  mongo:
+    image: mongo:6.0
+    container_name: exam-buddy-mongodb-dev
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=exam-buddy-dev
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - exam-buddy-net
+
+networks:
+  exam-buddy-net:
+    driver: bridge
+
+volumes:
+  mongodb_data:

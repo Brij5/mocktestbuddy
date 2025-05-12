@@ -54,58 +54,60 @@ const ProfilePage = () => {
   }
 
   return (
-    <Container maxWidth="md" sx={{ py: 3 }}>
-      <Typography variant="h4" gutterBottom component="h1" sx={{ mb: 3 }}>
-        User Profile
-      </Typography>
-      <Paper elevation={3} sx={{ p: 3 }}>
-        <Box component="form" onSubmit={submitHandler} noValidate>
-          <Grid container spacing={3}>
-            <Grid xs={12}>
-              <TextField
-                fullWidth
-                id="name"
-                label="Name"
-                value={userInfo.name || ''}
-                InputProps={{
-                  readOnly: true,
-                }}
-                variant="filled" // Or 'outlined'
-              />
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Container maxWidth="md" sx={{ py: 3 }}>
+        <Typography variant="h4" gutterBottom component="h1" sx={{ mb: 3 }}>
+          User Profile
+        </Typography>
+        <Paper elevation={3} sx={{ p: 3 }}>
+          <Box component="form" onSubmit={submitHandler} noValidate>
+            <Grid container spacing={3}>
+              <Grid xs={12}>
+                <TextField
+                  fullWidth
+                  id="name"
+                  label="Name"
+                  value={userInfo.name || ''}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="filled" // Or 'outlined'
+                />
+              </Grid>
+              <Grid xs={12}>
+                <TextField
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  type="email"
+                  value={userInfo.email || ''}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="filled"
+                />
+              </Grid>
+              <Grid xs={12}>
+                <TextField
+                  fullWidth
+                  id="role"
+                  label="Role"
+                  value={userInfo.role || ''}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="filled"
+                />
+              </Grid>
+              <Grid xs={12} sx={{ mt: 2, textAlign: 'right' }}>
+                <Button type="submit" variant="contained" disabled>
+                  Update Profile (Coming Soon)
+                </Button>
+              </Grid>
             </Grid>
-            <Grid xs={12}>
-              <TextField
-                fullWidth
-                id="email"
-                label="Email Address"
-                type="email"
-                value={userInfo.email || ''}
-                InputProps={{
-                  readOnly: true,
-                }}
-                variant="filled"
-              />
-            </Grid>
-            <Grid xs={12}>
-              <TextField
-                fullWidth
-                id="role"
-                label="Role"
-                value={userInfo.role || ''}
-                InputProps={{
-                  readOnly: true,
-                }}
-                variant="filled"
-              />
-            </Grid>
-            <Grid xs={12} sx={{ mt: 2, textAlign: 'right' }}>
-              <Button type="submit" variant="contained" disabled>
-                Update Profile (Coming Soon)
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-      </Paper>
+          </Box>
+        </Paper>
+      </Container>
     </Container>
   );
 };

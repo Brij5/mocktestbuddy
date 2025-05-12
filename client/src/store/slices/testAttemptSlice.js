@@ -73,7 +73,7 @@ export const submitTestAttempt = createAsyncThunk(
         // The backend will calculate score, accuracy, etc.
       };
       // TODO: Replace with actual API endpoint to submit test attempt
-      const response = await axios.post('/api/v1/test-attempts/submit', attemptData, config);
+      const response = await axios.post('/api/v1/progress/submit-attempt', attemptData, config);
       return response.data.data; // Assuming API returns attempt result (score, feedback, etc.)
     } catch (error) {
       const message = 

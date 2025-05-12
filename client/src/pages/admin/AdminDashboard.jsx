@@ -17,6 +17,12 @@ import {
   TableHead,
   TableRow,
   LinearProgress,
+  Container,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Divider,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -28,10 +34,10 @@ import {
   Visibility as VisibilityIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
+  History,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import AdminNavigation from "@components/Navigation/AdminNavigation";
 import { getStats, getRecentActivity } from "@store/slices/adminSlice";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -92,216 +98,117 @@ const AdminDashboard = () => {
     );
   }
 
-  const handleCreateExam = () => {
-    navigate('/admin/exams/new', {
-      state: {
-        type: 'full-length',
-        exams: stats?.exams || []
-      }
-    });
-  };
-
-  const handleCreateUser = () => {
-    navigate('/admin/users/new', { state: { fromDashboard: true } });
-  };
-
-  const handleManageUsers = () => {
-    navigate('/admin/users', { state: { fromDashboard: true } });
+  const handleNavigation = (path) => {
+    navigate(path);
   };
 
   return (
-    <AdminNavigation>
-      <StyledPaper>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Admin Dashboard
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          Welcome to the admin dashboard. Here you can manage exams, users, and settings.
-        </Typography>
+    <>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <StyledPaper>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Admin Dashboard
+          </Typography>
+          <Typography variant="body1" color="text.secondary" paragraph>
+            Welcome to the admin dashboard. Here you can manage exams, users, and settings.
+          </Typography>
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={3}>
-            <StatsCard>
-              <CardHeader
-                title="Total Exams"
-                avatar={
-                  <SchoolIcon sx={{ color: 'primary.main' }} />
-                }
-              />
-              <CardContent>
-                <Typography variant="h3" component="div">
-                  {stats?.exams || 0}
+          {/* Stats Section using Grid */}
+          <Grid container spacing={3} sx={{ mb: 4 }}>
+            {/* Total Exams Card */}
+            <Grid item xs={12} sm={6} md={4}>
+              <Paper elevation={2} sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <ListItemIcon sx={{ fontSize: 40, color: 'primary.main' }}>
+                  <SchoolIcon fontSize="inherit" />
+                </ListItemIcon>
+                <Typography variant="h6" component="h2">
+                  Total Exams
                 </Typography>
-                <Typography color="text.secondary" sx={{ mb: 1.5 }}>
+                <Typography component="p" variant="h4">
+                  {stats?.totalExams ?? 0}
+                </Typography>
+                <Typography color="text.secondary" sx={{ flex: 1 }}>
                   Total exams created
                 </Typography>
-                <Button
-                  variant="outlined"
+                <Button 
                   startIcon={<AddIcon />}
-                  onClick={handleCreateExam}
-                  fullWidth
+                  onClick={() => handleNavigation('/admin/exams/create')}
                 >
                   Create New Exam
                 </Button>
-              </CardContent>
-            </StatsCard>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <StatsCard>
-              <CardHeader
-                title="Active Users"
-                avatar={
-                  <PeopleIcon sx={{ color: 'success.main' }} />
-                }
-              />
-              <CardContent>
-                <Typography variant="h3" component="div">
-                  {stats?.activeUsers || 0}
+              </Paper>
+            </Grid>
+
+            {/* Active Users Card */}
+            <Grid item xs={12} sm={6} md={4}>
+              <Paper elevation={2} sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <ListItemIcon sx={{ fontSize: 40, color: 'success.main' }}>
+                  <PeopleIcon fontSize="inherit" />
+                </ListItemIcon>
+                <Typography variant="h6" component="h2">
+                  Active Users
                 </Typography>
-                <Typography color="text.secondary" sx={{ mb: 1.5 }}>
+                <Typography component="p" variant="h4">
+                  {stats?.activeUsers ?? 0}
+                </Typography>
+                <Typography color="text.secondary" sx={{ flex: 1 }}>
                   Currently active users
                 </Typography>
-                <Button
-                  variant="outlined"
+                <Button 
                   startIcon={<AddIcon />}
-                  onClick={handleCreateUser}
-                  fullWidth
+                  onClick={() => handleNavigation('/admin/users/create')}
                 >
                   Create New User
                 </Button>
-              </CardContent>
-            </StatsCard>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <StatsCard>
-              <CardHeader
-                title="Recent Activity"
-                avatar={
-                  <AssessmentIcon sx={{ color: 'info.main' }} />
-                }
-              />
-              <CardContent>
-                <Typography variant="h3" component="div">
-                  {recentActivity?.length || 0}
-                </Typography>
-                <Typography color="text.secondary" sx={{ mb: 1.5 }}>
-                  Recent activities logged
-                </Typography>
-                <Button
-                  variant="outlined"
-                  startIcon={<VisibilityIcon />}
-                  onClick={handleManageUsers}
-                  fullWidth
-                >
-                  View All Users
-                </Button>
-              </CardContent>
-            </StatsCard>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <StatsCard>
-              <CardHeader
-                title="System Settings"
-                avatar={
-                  <SettingsIcon sx={{ color: 'warning.main' }} />
-                }
-              />
-              <CardContent>
-                <Typography variant="h3" component="div">
-                  <BarChartIcon sx={{ fontSize: 40 }} />
-                </Typography>
-                <Typography color="text.secondary" sx={{ mb: 1.5 }}>
-                  Configure system settings
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<SettingsIcon />}
-                  onClick={() => navigate('/admin/settings')}
-                  sx={{ mt: 2 }}
-                >
-                  Settings
-                </Button>
-              </CardContent>
-            </StatsCard>
-          </Grid>
-        </Grid>
+              </Paper>
+            </Grid>
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardHeader
-                title="Create New Exam"
-                action={
-                  <IconButton onClick={handleCreateExam}>
-                    <AddIcon />
-                  </IconButton>
-                }
-              />
-              <CardContent>
-                <Typography variant="body1">
-                  Create a new full-length mock exam based on existing exam patterns.
+            {/* Recent Activity Section */}
+            <Grid item xs={12} sx={{ mb: 4 }}>
+              <Paper elevation={2} sx={{ p: 2 }}>
+                <Typography variant="h6" component="h2" gutterBottom>
+                  Recent Activity
                 </Typography>
-              </CardContent>
-            </Card>
+                {loading ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                    <LinearProgress />
+                  </Box>
+                ) : error ? (
+                  <Typography color="error" variant="body2">
+                    {error}
+                  </Typography>
+                ) : recentActivity && recentActivity.length > 0 ? (
+                  <List dense>
+                    {recentActivity.slice(0, 5).map((activity, index) => ( // Show top 5 activities
+                      <React.Fragment key={activity._id || index}>
+                        <ListItem>
+                          <ListItemIcon>
+                            <History />
+                          </ListItemIcon>
+                          <ListItemText 
+                            primary={activity.description || 'Activity description missing'} 
+                            secondary={`User: ${activity.userId?.name || 'Unknown'} | ${new Date(activity.timestamp).toLocaleString()}`}
+                          />
+                          {/* Add action button if needed, e.g., view details */}
+                        </ListItem>
+                        {index < recentActivity.slice(0, 5).length - 1 && <Divider variant="inset" component="li" />}
+                      </React.Fragment>
+                    ))}
+                    {recentActivity.length > 5 && (
+                       <ListItem sx={{ justifyContent: 'center' }}>
+                         <Button onClick={() => handleNavigation('/admin/activity-log')}>View Full Log</Button> 
+                       </ListItem>
+                    )}
+                  </List>
+                ) : (
+                  <Typography>No recent activity found.</Typography>
+                )}
+              </Paper>
+            </Grid>
           </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardHeader
-                title="Create New User"
-                action={
-                  <IconButton onClick={handleCreateUser}>
-                    <AddIcon />
-                  </IconButton>
-                }
-              />
-              <CardContent>
-                <Typography variant="body1">
-                  Add a new user to the system with appropriate role and permissions.
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardHeader
-                title="Manage Users"
-                action={
-                  <IconButton onClick={handleManageUsers}>
-                    <PeopleIcon />
-                  </IconButton>
-                }
-              />
-              <CardContent>
-                <Typography variant="body1">
-                  View, edit, and manage all users in the system.
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardHeader
-                title="Settings"
-                action={
-                  <IconButton onClick={() => navigate('/admin/settings')}>
-                    <SettingsIcon />
-                  </IconButton>
-                }
-              />
-              <CardContent>
-                <Typography variant="body1">
-                  Configure system settings and preferences.
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </StyledPaper>
-    </AdminNavigation>
+        </StyledPaper>
+      </Container>
+    </>
   );
 };
 

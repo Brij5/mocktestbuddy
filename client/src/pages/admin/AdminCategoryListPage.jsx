@@ -202,7 +202,9 @@ const AdminCategoryListPage = () => {
           Add Category
         </Button>
       </Box>
-      {content}
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        {content}
+      </Container>
 
       {/* Add/Edit Category Dialog */}
       <Dialog open={dialogOpen} onClose={handleCloseDialog}>

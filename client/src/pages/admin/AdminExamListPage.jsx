@@ -122,7 +122,9 @@ const AdminExamListPage = () => {
           Add Exam
         </Button>
       </Box>
-      {content}
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        {content}
+      </Container>
     </Container>
   );
 };

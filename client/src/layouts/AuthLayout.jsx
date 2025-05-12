@@ -1,40 +1,28 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import {
-  Container,
-  Box,
-  Paper,
-} from '@mui/material';
+import { Box, Container } from '@mui/material';
 
+// Layout for authentication pages (Login, Register, etc.) that centers content.
 const AuthLayout = () => {
   return (
-    <Container 
-      component="main" 
-      maxWidth="xs"
+    <Box
       sx={{
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '80vh',
-        py: 4,
+        flexDirection: 'column', // Although centering, keep column flow if needed for headers/footers later
+        alignItems: 'center', // Center horizontally
+        justifyContent: 'center', // Center vertically
+        minHeight: '100vh', // Ensure the box takes full viewport height
+        // Example background color
+        // backgroundColor: (theme) => theme.palette.grey[50],
       }}
     >
-      <Paper 
-        elevation={3}
-        sx={{ 
-          p: { xs: 2, sm: 4 },
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        {/* Outlet renders the specific auth page (Login, Register, etc.) */}
-        <Outlet />
-      </Paper>
-    </Container>
+      {/* Container limits the width of the centered authentication form */}
+      <Container component="main" maxWidth="xs">
+          {/* Outlet renders the specific auth page like LoginPage, RegisterPage */}
+          <Outlet /> 
+      </Container>
+    </Box>
   );
 };
 
-export default AuthLayout; 
+export default AuthLayout;

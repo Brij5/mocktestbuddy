@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { register } from '../store/slices/authSlice';
+import { register } from '../../store/slices/authSlice';
 import { 
   Container, 
   Typography, 
@@ -206,7 +206,7 @@ const RegisterPage = () => {
           {loading ? <CircularProgress size={24} /> : 'Register'}
         </Button>
         <Grid container justifyContent="flex-end">
-          <Grid item>
+          <Grid>
             <Link component={RouterLink} to="/login" variant="body2">
               Already have an account? Sign in
             </Link>

@@ -35,10 +35,12 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   History,
+  ListAlt as CategoryIcon,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { getStats, getRecentActivity } from "@store/slices/adminSlice";
+import DashboardStatCard from '../../components/dashboard/DashboardStatCard';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
@@ -47,20 +49,6 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(2),
   },
 }));
-
-const StatsCard = styled(Card)({
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: 16,
-  cursor: 'pointer',
-  transition: 'transform 0.2s',
-  '&:hover': {
-    transform: 'scale(1.02)',
-  },
-});
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -116,55 +104,55 @@ const AdminDashboard = () => {
           {/* Stats Section using Grid */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
             {/* Total Exams Card */}
-            <Grid item xs={12} sm={6} md={4}>
-              <Paper elevation={2} sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <ListItemIcon sx={{ fontSize: 40, color: 'primary.main' }}>
-                  <SchoolIcon fontSize="inherit" />
-                </ListItemIcon>
-                <Typography variant="h6" component="h2">
-                  Total Exams
-                </Typography>
-                <Typography component="p" variant="h4">
-                  {stats?.totalExams ?? 0}
-                </Typography>
-                <Typography color="text.secondary" sx={{ flex: 1 }}>
-                  Total exams created
-                </Typography>
-                <Button 
-                  startIcon={<AddIcon />}
-                  onClick={() => handleNavigation('/admin/exams/create')}
-                >
-                  Create New Exam
-                </Button>
-              </Paper>
-            </Grid>
+            <DashboardStatCard 
+              icon={<SchoolIcon fontSize="inherit" />}
+              iconColor='primary.main'
+              title="Total Exams"
+              value={stats?.totalExams ?? 0}
+              description="Total exams created"
+              buttonText="Create New Exam"
+              buttonStartIcon={<AddIcon />}
+              onButtonClick={() => handleNavigation('/admin/exams/create')}
+            />
 
             {/* Active Users Card */}
-            <Grid item xs={12} sm={6} md={4}>
-              <Paper elevation={2} sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <ListItemIcon sx={{ fontSize: 40, color: 'success.main' }}>
-                  <PeopleIcon fontSize="inherit" />
-                </ListItemIcon>
-                <Typography variant="h6" component="h2">
-                  Active Users
-                </Typography>
-                <Typography component="p" variant="h4">
-                  {stats?.activeUsers ?? 0}
-                </Typography>
-                <Typography color="text.secondary" sx={{ flex: 1 }}>
-                  Currently active users
-                </Typography>
-                <Button 
-                  startIcon={<AddIcon />}
-                  onClick={() => handleNavigation('/admin/users/create')}
-                >
-                  Create New User
-                </Button>
-              </Paper>
-            </Grid>
+            <DashboardStatCard 
+              icon={<PeopleIcon fontSize="inherit" />}
+              iconColor='success.main'
+              title="Active Users"
+              value={stats?.activeUsers ?? 0}
+              description="Currently active users"
+              buttonText="Create New User"
+              buttonStartIcon={<AddIcon />}
+              onButtonClick={() => handleNavigation('/admin/users/create')}
+            />
+
+            {/* Manage Categories Card */}
+            <DashboardStatCard 
+              icon={<CategoryIcon fontSize="inherit" />}
+              iconColor='info.main'
+              title="Manage Categories"
+              value={stats?.totalCategories ?? 'N/A'}
+              description="Organize exams by category"
+              buttonText="Go to Categories"
+              onButtonClick={() => handleNavigation('/admin/categories')}
+            />
+
+            {/* Placeholder for a third stat card if needed in a 3-column layout */}
+            {/* 
+            <DashboardStatCard 
+              icon={<SettingsIcon fontSize="inherit" />}
+              iconColor='warning.main'
+              title="System Settings"
+              value="Configured"
+              description="Manage system parameters"
+              buttonText="Go to Settings"
+              onButtonClick={() => handleNavigation('/admin/settings')}
+            />
+            */}
 
             {/* Recent Activity Section */}
-            <Grid item xs={12} sx={{ mb: 4 }}>
+            <Grid sx={{ mb: 4 }}>
               <Paper elevation={2} sx={{ p: 2 }}>
                 <Typography variant="h6" component="h2" gutterBottom>
                   Recent Activity

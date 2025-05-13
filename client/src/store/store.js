@@ -4,6 +4,7 @@ import examReducer from './slices/examSlice';
 import testAttemptReducer from './slices/testAttemptSlice';
 import examManagerReducer from './slices/examManagerSlice'; 
 import progressReducer from './slices/progressSlice'; 
+import categoryReducer from './slices/categorySlice'; 
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     testAttempt: testAttemptReducer,
     examManager: examManagerReducer, 
     progress: progressReducer,
+    categories: categoryReducer,
     // Add other reducers here as the application grows
   },
   // Redux Toolkit includes redux-thunk middleware by default,

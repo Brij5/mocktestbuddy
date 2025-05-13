@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { login } from '../store/slices/authSlice';
+import { login } from '../../store/slices/authSlice';
 import {
   Container,
   Typography,

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom'; // Retaining for potential future use
 import {
   Container,
   Typography,
@@ -20,34 +20,37 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { fetchAllExamsAdmin } from '../../store/slices/examSlice';
+import { fetchAllExamsAdmin } from '../../store/slices/examSlice'; // Path remains correct
 
-const AdminExamListPage = () => {
+const ExamListPage = () => { // Renamed component
   const dispatch = useDispatch();
 
   // --- Select state from Redux ---
   const { allExams, allExamsStatus, allExamsError } = useSelector((state) => state.exams);
 
   useEffect(() => {
-    // Fetch exams if the status is 'idle'
-    if (allExamsStatus === 'idle') {
+    // Fetch exams if the status is 'idle' or has failed, to allow retry on component mount
+    if (allExamsStatus === 'idle' || allExamsStatus === 'failed') {
       dispatch(fetchAllExamsAdmin());
     }
   }, [dispatch, allExamsStatus]);
 
   const handleAddExam = () => {
-    // TODO: Navigate to Add Exam page or open modal
-    alert('Add exam functionality not implemented yet.');
+    // TODO: Navigate to Add Exam page (e.g., /admin/exams/create or /exams/create)
+    // For now, using navigate from react-router-dom if we decide to import it
+    // navigate('/admin/exams/create'); // Example
+    alert('Add exam functionality: Navigate to create exam page.');
   };
 
   const handleEditExam = (examId) => {
-    // TODO: Navigate to Edit Exam page or open modal
-    alert(`Edit exam ${examId} functionality not implemented yet.`);
+    // TODO: Navigate to Edit Exam page (e.g., /admin/exams/edit/:examId or /exams/:examId/edit)
+    // navigate(`/admin/exams/edit/${examId}`); // Example
+    alert(`Edit exam ${examId} functionality: Navigate to edit exam page.`);
   };
 
   const handleDeleteExam = (examId) => {
-    // TODO: Implement delete confirmation and action
-    alert(`Delete exam ${examId} functionality not implemented yet.`);
+    // TODO: Implement delete confirmation and action (dispatch deleteExam(examId))
+    alert(`Delete exam ${examId} functionality: Dispatch delete action.`);
   };
 
   let content;
@@ -55,7 +58,12 @@ const AdminExamListPage = () => {
   if (allExamsStatus === 'loading') {
     content = <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}><CircularProgress /></Box>;
   } else if (allExamsStatus === 'failed') {
-    content = <Alert severity="error" sx={{ mt: 2 }}>Error loading exams: {allExamsError}</Alert>;
+    content = (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        Error loading exams: {allExamsError}
+        <Button onClick={() => dispatch(fetchAllExamsAdmin())} sx={{ml: 2}} size="small">Retry</Button>
+      </Alert>
+    );
   } else if (allExamsStatus === 'succeeded' && allExams.length === 0) {
     content = <Typography sx={{ mt: 2 }}>No exams found. Add one!</Typography>;
   } else if (allExamsStatus === 'succeeded' && allExams.length > 0) {
@@ -76,7 +84,7 @@ const AdminExamListPage = () => {
             {allExams.map((exam) => (
               <TableRow key={exam._id}>
                 <TableCell>{exam.name}</TableCell>
-                <TableCell>{exam.category?.name || 'N/A'}</TableCell> {/* Display category name */}
+                <TableCell>{exam.category?.name || 'N/A'}</TableCell>
                 <TableCell>{exam.durationMinutes}</TableCell>
                 <TableCell>{exam.totalMarks}</TableCell>
                 <TableCell>{exam.isActive ? 'Yes' : 'No'}</TableCell>
@@ -84,15 +92,17 @@ const AdminExamListPage = () => {
                   <IconButton
                     aria-label="edit"
                     size="small"
-                    onClick={() => handleEditExam(exam._id)} // Use handler
+                    onClick={() => handleEditExam(exam._id)}
                     sx={{ mr: 1 }}
+                    // component={RouterLink} // If navigating via Link
+                    // to={`/admin/exams/edit/${exam._id}`} // Example path
                   >
                     <EditIcon fontSize="small"/>
                   </IconButton>
                   <IconButton
                     aria-label="delete"
                     size="small"
-                    onClick={() => handleDeleteExam(exam._id)} // Use handler
+                    onClick={() => handleDeleteExam(exam._id)}
                     color="error"
                   >
                     <DeleteIcon fontSize="small"/>
@@ -117,16 +127,17 @@ const AdminExamListPage = () => {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={handleAddExam}
+          onClick={handleAddExam} // Consider navigating instead of alert
+          // component={RouterLink} // If navigating via Link
+          // to="/admin/exams/create" // Example path
         >
           Add Exam
         </Button>
       </Box>
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        {content}
-      </Container>
+      {/* Removed redundant Container wrapping content */}
+      {content}
     </Container>
   );
 };
 
-export default AdminExamListPage;
+export default ExamListPage; // Exporting renamed component

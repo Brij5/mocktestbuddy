@@ -52,7 +52,7 @@ const AdminDashboardScreen = () => {
         </Typography>
         
         <Grid container spacing={3} sx={{ mt: 3 }}>
-          <Grid item xs={12} md={4}>
+          <Grid xs={12} md={4}>
             <Card>
               <CardHeader
                 title="Create New Exam"
@@ -70,7 +70,7 @@ const AdminDashboardScreen = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={12} md={4}>
+          <Grid xs={12} md={4}>
             <Card>
               <CardHeader
                 title="Manage Users"
@@ -88,7 +88,7 @@ const AdminDashboardScreen = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={12} md={4}>
+          <Grid xs={12} md={4}>
             <Card>
               <CardHeader
                 title="Settings"

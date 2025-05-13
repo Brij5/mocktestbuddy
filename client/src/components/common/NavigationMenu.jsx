@@ -75,7 +75,6 @@ const NavigationMenu = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [mobileOpen, setMobileOpen] = useState(false);
   const { userInfo } = useSelector((state) => state.auth);
-  console.log('Current User Role:', userInfo?.role);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

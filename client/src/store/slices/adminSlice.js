@@ -1,57 +1,57 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../utils/axios';
 
 // API endpoints
-const API_BASE_URL = 'http://localhost:5000/api/admin';
+const ADMIN_API_BASE = '/admin';
 
 // Async Thunks
 export const getStats = createAsyncThunk('admin/getStats', async () => {
-  const response = await axios.get(`${API_BASE_URL}/stats`);
+  const response = await api.get(`${ADMIN_API_BASE}/stats`);
   return response.data;
 });
 
 export const getRecentActivity = createAsyncThunk('admin/getRecentActivity', async () => {
-  const response = await axios.get(`${API_BASE_URL}/activity`);
+  const response = await api.get(`${ADMIN_API_BASE}/activity`);
   return response.data;
 });
 
 export const getUsers = createAsyncThunk('admin/getUsers', async () => {
-  const response = await axios.get(`${API_BASE_URL}/users`);
+  const response = await api.get(`${ADMIN_API_BASE}/users`);
   return response.data;
 });
 
 export const createUser = createAsyncThunk('admin/createUser', async (userData) => {
-  const response = await axios.post(`${API_BASE_URL}/users`, userData);
+  const response = await api.post(`${ADMIN_API_BASE}/users`, userData);
   return response.data;
 });
 
 export const updateUser = createAsyncThunk('admin/updateUser', async ({ id, ...userData }) => {
-  const response = await axios.put(`${API_BASE_URL}/users/${id}`, userData);
+  const response = await api.put(`${ADMIN_API_BASE}/users/${id}`, userData);
   return response.data;
 });
 
 export const deleteUser = createAsyncThunk('admin/deleteUser', async (userId) => {
-  const response = await axios.delete(`${API_BASE_URL}/users/${userId}`);
+  const response = await api.delete(`${ADMIN_API_BASE}/users/${userId}`);
   return response.data;
 });
 
 export const getExams = createAsyncThunk('admin/getExams', async () => {
-  const response = await axios.get(`${API_BASE_URL}/exams`);
+  const response = await api.get(`${ADMIN_API_BASE}/exams`);
   return response.data;
 });
 
 export const createExam = createAsyncThunk('admin/createExam', async (examData) => {
-  const response = await axios.post(`${API_BASE_URL}/exams`, examData);
+  const response = await api.post(`${ADMIN_API_BASE}/exams`, examData);
   return response.data;
 });
 
 export const updateExam = createAsyncThunk('admin/updateExam', async ({ id, ...examData }) => {
-  const response = await axios.put(`${API_BASE_URL}/exams/${id}`, examData);
+  const response = await api.put(`${ADMIN_API_BASE}/exams/${id}`, examData);
   return response.data;
 });
 
 export const deleteExam = createAsyncThunk('admin/deleteExam', async (examId) => {
-  const response = await axios.delete(`${API_BASE_URL}/exams/${examId}`);
+  const response = await api.delete(`${ADMIN_API_BASE}/exams/${examId}`);
   return response.data;
 });
 

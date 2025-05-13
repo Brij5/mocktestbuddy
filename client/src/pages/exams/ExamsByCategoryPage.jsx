@@ -17,7 +17,7 @@ import {
   Link
 } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { fetchExamsByCategory, fetchCategories } from '../store/slices/examSlice';
+import { fetchExamsByCategory, fetchCategories } from '../../store/slices/examSlice'; // Adjusted import path
 
 // Input selectors
 const selectExamsByCategoryState = (state) => state.exams.examsByCategory;
@@ -98,7 +98,7 @@ const ExamsByCategoryPage = () => {
       ) : exams && exams.length > 0 ? (
         <Grid container spacing={3}>
           {exams.map((exam) => (
-            <Grid item xs={12} sm={6} md={4} key={exam._id}>
+            <Grid key={exam._id}>
               <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography variant="h6" component="h2" gutterBottom>

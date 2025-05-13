@@ -2,7 +2,7 @@ console.log('[DEBUG] Top of server/routes/index.js');
 
 import express from 'express';
 import authRoutes from './auth/authRoutes.js';
-import categoryRoutes from './category/examCategoryRoutes.js'; 
+import categoryRoutes from './categoryRoutes.js';
 import examRoutes from './exam/examRoutes.js';
 import progressRoutes from './progress/progressRoutes.js';
 import adminRoutes from './admin/index.js'; 

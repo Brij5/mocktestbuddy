@@ -14,6 +14,7 @@ const verifyToken = promisify(jwt.verify);
  * Protect routes - verify JWT token
  */
 export const protect = async (req, res, next) => {
+  console.log(`[DEBUG_PROTECT] Entered protect middleware. Method: ${req.method}, URL: ${req.originalUrl}, Timestamp: ${new Date().toISOString()}`);
   try {
     let token;
 

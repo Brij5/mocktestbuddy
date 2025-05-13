@@ -128,7 +128,7 @@ const ExamManagerDashboard = () => {
 
           <Grid container spacing={3}>
             {/* Stats Cards */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid>
               <StatsCard>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <SchoolIcon sx={{ color: '#1976d2', mr: 1 }} />
@@ -140,7 +140,7 @@ const ExamManagerDashboard = () => {
               </StatsCard>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid>
               <StatsCard>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <AssessmentIcon sx={{ color: '#4caf50', mr: 1 }} />
@@ -152,7 +152,7 @@ const ExamManagerDashboard = () => {
               </StatsCard>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid>
               <StatsCard>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <BarChartIcon sx={{ color: '#f57c00', mr: 1 }} />
@@ -164,7 +164,7 @@ const ExamManagerDashboard = () => {
               </StatsCard>
             </Grid>
             {/* Create New Exam Button */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid>
               <StatsCard onClick={handleCreateExam} sx={{ justifyContent: 'center', backgroundColor: 'primary.main', color: 'primary.contrastText', '&:hover': { backgroundColor: 'primary.dark'} }}>
                 <AddIcon sx={{ fontSize: 40, mb: 1 }} />
                 <Typography variant="h6" align="center">Create New Exam</Typography>
@@ -173,7 +173,7 @@ const ExamManagerDashboard = () => {
           </Grid>
 
           <Grid container spacing={3} sx={{ mt: 2 }}>
-            <Grid item xs={12}>
+            <Grid>
               <Card>
                 <CardHeader
                   title="Recent Activity"
@@ -256,7 +256,7 @@ const ExamManagerDashboard = () => {
           </Grid>
 
           <Grid container spacing={3} sx={{ mt: 3 }}>
-            <Grid item xs={12} md={4}>
+            <Grid>
               <Card>
                 <CardHeader
                   title="Create New Exam"

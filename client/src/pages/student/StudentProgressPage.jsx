@@ -21,9 +21,10 @@ import {
 } from '@mui/material';
 import { 
   fetchStudentProgressData, 
+  // selectProgressData, // Removed as it's not exported by progressSlice and not used
   selectProgressLoading, 
   selectProgressError 
-} from '../store/slices/progressSlice';
+} from '../../store/slices/progressSlice'; // Corrected path
 import { format } from 'date-fns';
 
 const StudentProgressPage = () => {
@@ -90,7 +91,7 @@ const StudentProgressPage = () => {
 
       {/* Overall Progress Stats */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid xs={12} sm={4}>
+        <Grid>
           <Card sx={{height: '100%'}}>
             <CardContent>
               <Typography variant="h6" color="text.secondary">Exams Completed</Typography>
@@ -98,7 +99,7 @@ const StudentProgressPage = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid xs={12} sm={4}>
+        <Grid>
           <Card sx={{height: '100%'}}>
             <CardContent>
               <Typography variant="h6" color="text.secondary">Average Accuracy</Typography>
@@ -106,7 +107,7 @@ const StudentProgressPage = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid xs={12} sm={4}>
+        <Grid>
           <Card sx={{height: '100%'}}>
             <CardContent>
               <Typography variant="h6" color="text.secondary">Total Study Time</Typography>

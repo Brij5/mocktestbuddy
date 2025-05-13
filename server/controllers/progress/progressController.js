@@ -1,12 +1,38 @@
 import asyncHandler from '../../utils/asyncHandler.js';
 import Progress from '../../models/progress/Progress.js';
 import TestAttempt from '../../models/TestAttempt.js';
+import Exam from '../../models/exam/Exam.js';
+import Question from '../../models/Question.js';
 import { protect } from '../../middleware/auth/authMiddleware.js';
 
 // @desc    Get user's progress
 // @route   GET /api/progress/me
 // @access  Private
 export const getUserProgress = asyncHandler(async (req, res) => {
+  // 1. Fetch Recent Test Attempts directly
+  const recentTestAttempts = await TestAttempt.find({ user: req.user._id })
+    .sort({ endTime: -1 }) // Sort by completion time, newest first
+    .limit(5) // Limit to the 5 most recent attempts
+    .populate('exam', 'name totalMarks passingMarks') // Populate exam details needed for display
+    .lean(); // Use .lean() for plain JS objects if not modifying
+
+  // Map TestAttempt data to the format expected by the frontend
+  const recentAttempts = recentTestAttempts.map(attempt => ({
+    _id: attempt._id, // Use the actual TestAttempt ID
+    examName: attempt.exam?.name || 'N/A',
+    completedAt: attempt.endTime, // Use endTime from TestAttempt
+    // Calculate accuracy on the fly or ensure it's stored on TestAttempt
+    accuracy: attempt.totalQuestions > 0 
+                ? parseFloat(((attempt.correctlyAnsweredQuestions / attempt.totalQuestions) * 100).toFixed(1))
+                : 0,
+    score: attempt.marksObtained,
+    totalQuestions: attempt.totalQuestions,
+    // Add other fields if needed by the frontend table (e.g., passed status)
+    passed: attempt.passed,
+    examId: attempt.exam?._id // Include examId if needed for links
+  }));
+
+  // 2. Fetch Aggregate Progress Data (as before)
   const userProgressDocs = await Progress.find({ user: req.user._id })
     .populate('exam', 'name subject') // Populate exam to get name and subject
     .populate('category', 'name')
@@ -16,7 +42,7 @@ export const getUserProgress = asyncHandler(async (req, res) => {
     // Send a structured empty response if no progress found
     return res.json({
       data: {
-        recentAttempts: [],
+        recentAttempts,
         overallProgress: {
           averageAccuracy: 0,
           totalStudyTime: 0,
@@ -27,15 +53,6 @@ export const getUserProgress = asyncHandler(async (req, res) => {
       },
     });
   }
-
-  const recentAttempts = userProgressDocs.map(p => ({
-    _id: p.exam._id, // Using exam id for attempt identification, or p._id if progress doc is the attempt
-    examName: p.exam.name,
-    completedAt: p.lastAttemptedAt,
-    accuracy: p.accuracy,
-    score: p.correctAnswers, // Assuming score is number of correct answers
-    totalQuestions: p.totalQuestionsAttempted,
-  }));
 
   let totalCorrectOverall = 0;
   let totalAttemptedOverall = 0;
@@ -78,10 +95,11 @@ export const getUserProgress = asyncHandler(async (req, res) => {
     weakSubjects: weakSubjectsOverall,
   };
 
+  // 3. Send Combined Response
   res.json({
     data: {
-      recentAttempts,
-      overallProgress,
+      recentAttempts, // Use the newly fetched recent attempts
+      overallProgress, // Use the calculated overall progress
     },
   });
 });
@@ -241,6 +259,115 @@ export const updateProgress = asyncHandler(async (req, res) => {
   // Save progress
   const updatedProgress = await progress.save();
   res.json(updatedProgress);
+});
+
+// @desc    Submit a test attempt
+// @route   POST /api/progress/submit-attempt
+// @access  Private
+export const submitTestAttempt = asyncHandler(async (req, res) => {
+  const { examId, answers, startTime, endTime, attemptedInLanguage } = req.body;
+  const userId = req.user._id;
+
+  console.log(`[submitTestAttempt] Received submission for exam ${examId} from user ${userId}`);
+
+  // 1. Fetch Exam details
+  const exam = await Exam.findById(examId);
+  if (!exam) {
+    res.status(404);
+    throw new Error('Exam not found');
+  }
+
+  // 2. Fetch associated Questions
+  const questions = await Question.find({ exam: examId });
+  if (!questions || questions.length === 0) {
+    res.status(404);
+    throw new Error('Questions not found for this exam');
+  }
+
+  // 3. Process and Grade the Answers
+  let marksObtainedCalc = 0;
+  let correctCount = 0;
+  let incorrectCount = 0;
+  const attemptedQuestionsDetails = [];
+  const questionMap = new Map(questions.map(q => [q._id.toString(), q]));
+  // Assuming negative marking schema exists on Exam model
+  const negativeMarksPerQuestion = exam.negativeMarkingSchema && exam.negativeMarksPerQuestion ? exam.negativeMarksPerQuestion : 0;
+
+  answers.forEach(attempt => {
+    const question = questionMap.get(attempt.questionId);
+    if (question) {
+      let isCorrect = false;
+      let marksForThisQuestion = 0;
+
+      // Simple comparison (adjust for different question types if needed)
+      if (attempt.selectedAnswer && question.correctAnswer === attempt.selectedAnswer) {
+        isCorrect = true;
+        marksForThisQuestion = question.marks || 0;
+        correctCount++;
+      } else {
+        // Mark as incorrect only if an answer was selected
+        if (attempt.selectedAnswer) {
+          isCorrect = false;
+          marksForThisQuestion = -negativeMarksPerQuestion;
+          incorrectCount++;
+        } else {
+          // Unanswered is handled separately later, no marks change here
+          marksForThisQuestion = 0;
+        }
+      }
+
+      // Ensure marks don't go below zero due to negative marking if needed (optional rule)
+      // marksForThisQuestion = Math.max(0, marksForThisQuestion); // Uncomment if negative marks shouldn't make total negative
+
+      marksObtainedCalc += marksForThisQuestion;
+
+      attemptedQuestionsDetails.push({
+        question: question._id,
+        selectedAnswer: attempt.selectedAnswer,
+        isCorrect: isCorrect,
+        marksObtained: marksForThisQuestion,
+      });
+    } else {
+      console.warn(`Attempted question ID ${attempt.questionId} not found in exam ${examId}`);
+      // Optionally handle this case, e.g., mark as incorrect or ignore
+    }
+  });
+
+  const unansweredCount = questions.length - (correctCount + incorrectCount);
+
+  // 4. Create TestAttempt Document
+  const newTestAttempt = new TestAttempt({
+    user: userId,
+    exam: examId,
+    startTime: new Date(startTime), // Ensure dates are stored as Date objects
+    endTime: new Date(endTime),
+    status: 'completed',
+    totalQuestions: questions.length,
+    correctlyAnsweredQuestions: correctCount,
+    incorrectlyAnsweredQuestions: incorrectCount,
+    unansweredQuestions: unansweredCount,
+    marksObtained: marksObtainedCalc,
+    totalMarks: exam.totalMarks, // Use total marks from the Exam model
+    passingMarks: exam.passingMarks,
+    passed: marksObtainedCalc >= exam.passingMarks,
+    attemptedQuestions: attemptedQuestionsDetails,
+    attemptedInLanguage: attemptedInLanguage,
+    // Add other relevant fields from Exam model if needed, e.g., duration
+    durationTaken: (new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000 // Duration in seconds
+  });
+
+  // 5. Save the TestAttempt
+  const savedAttempt = await newTestAttempt.save();
+
+  // TODO: Optionally, update UserProgress based on this attempt
+  // await updateProgress(userId, examId, marksObtainedCalc, savedAttempt.passed);
+
+  // 6. Send Response
+  res.status(201).json({
+    success: true,
+    message: 'Test attempt submitted successfully.',
+    data: savedAttempt,
+  });
 });
 
 // @desc    Get user's achievements

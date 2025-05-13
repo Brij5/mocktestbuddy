@@ -29,8 +29,7 @@ import {
   selectTestSubmissionResult,
   selectTestAttemptStatus,
   selectTestAttemptError,
-  selectMarkedForReview,
-} from '../store/slices/testAttemptSlice';
+} from '../../store/slices/testAttemptSlice'; // Corrected import path
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
@@ -53,7 +52,6 @@ const MockTestScreen = () => {
   const submissionResult = useSelector(selectTestSubmissionResult);
   const testAttemptStatus = useSelector(selectTestAttemptStatus);
   const testAttemptError = useSelector(selectTestAttemptError);
-  const markedForReviewCount = useSelector(selectMarkedForReview).length;
 
   useEffect(() => {
     if (examId) {
@@ -80,8 +78,10 @@ const MockTestScreen = () => {
       // For now, let's assume results are shown on this screen or a dedicated one.
       // Navigation can be handled based on submissionResult content later.
       // console.log('Test submitted, result:', submissionResult);
+      // Potential navigation to a dedicated results page if this screen shouldn't show them:
+      // navigate(`/tests/${examId}/result`); // Ensure this matches your new results route
     }
-  }, [isTestSubmitted, submissionResult, navigate]);
+  }, [isTestSubmitted, submissionResult, navigate, examId]); // Added examId to dependencies for potential navigation
 
   const handleAnswerChange = (questionId, answer) => {
     dispatch(updateUserAnswer({ questionId, answer }));
@@ -130,24 +130,37 @@ const MockTestScreen = () => {
     );
   }
 
+  // Conditional rendering for submitted state
+  // This component handles both test taking and showing immediate results after submission.
+  // If a separate result page is strongly preferred, this section would navigate away.
   if (isTestSubmitted) {
     return (
       <StyledPaper>
         <Typography variant="h4" component="h1" gutterBottom>
-          Test Results for {currentExamDetails.name}
+          Test Submitted: {currentExamDetails.name}
         </Typography>
-        {testAttemptStatus === 'loading' && <CircularProgress />}
-        {testAttemptError && <Alert severity="error">Error submitting: {testAttemptError}</Alert>}
-        {submissionResult && (
-          <Box>
+        {testAttemptStatus === 'loading' && <CircularProgress sx={{my: 2}}/>}
+        {testAttemptError && <Alert severity="error" sx={{my: 2}}>Error processing submission: {testAttemptError}</Alert>}
+        {submissionResult ? (
+          <Box sx={{my: 2}}>
             <Typography variant="h6">Your Score: {submissionResult.score} / {submissionResult.totalQuestions}</Typography>
             <Typography>Accuracy: {submissionResult.accuracy}%</Typography>
-            {/* Add more detailed results display here if needed */}
+            {/* TODO: Add more detailed results or a link to the full TestResultPage */}
+            <Button 
+              variant="contained" 
+              color="primary" 
+              onClick={() => navigate(`/tests/${examId}/result`)} // Navigate to the detailed results page
+              sx={{ mt: 3, mr: 1 }}
+            >
+              View Detailed Results
+            </Button>
+            <Button variant="outlined" onClick={() => navigate('/student/dashboard')} sx={{ mt: 3 }}>
+              Back to Student Dashboard
+            </Button>
           </Box>
+        ) : (
+          !testAttemptError && <Typography sx={{my: 2}}>Processing your results...</Typography>
         )}
-        <Button variant="outlined" onClick={() => navigate('/dashboard')} sx={{ mt: 2 }}>
-          Back to Dashboard
-        </Button>
       </StyledPaper>
     );
   }
@@ -161,67 +174,73 @@ const MockTestScreen = () => {
 
   return (
     <StyledPaper>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, pb: 2, borderBottom: '1px solid #eee' }}>
         <Typography variant="h5" component="h1">
           {currentExamDetails.name}
         </Typography>
-        <Typography variant="h6" color={timeLeftSeconds <= 60 ? 'error' : 'textPrimary'}>
+        <Typography variant="h6" color={timeLeftSeconds <= 60 ? 'error.dark' : 'text.primary'} sx={{fontWeight: 'bold'}}>
           Time Left: {formatTime(timeLeftSeconds)}
         </Typography>
       </Box>
 
       <Box sx={{ mb: 4 }}>
-        <Typography variant="body1">
+        <Typography variant="body1" gutterBottom>
           Question {currentQuestionIndex + 1} of {currentExamDetails.questions.length}
         </Typography>
-        <Typography variant="h6" sx={{ mt: 2, mb: 2, fontWeight: 'medium' }}>
-          {currentQuestionData.text}
+        <Typography variant="h6" sx={{ mt: 1, mb: 2, fontWeight: '500', minHeight: '3em' }}>
+          {currentQuestionData?.text || 'Question text loading...'}
         </Typography>
 
-        <FormControl component="fieldset" sx={{ mt: 1, width: '100%' }}>
-          <RadioGroup
-            value={userAnswers[currentQuestionData._id] || ''}
-            onChange={(e) => handleAnswerChange(currentQuestionData._id, e.target.value)}
-          >
-            {currentQuestionData.options.map((option, index) => (
-              <FormControlLabel
-                key={option._id || index}
-                value={option.text}
-                control={<Radio />}
-                label={option.text}
-                sx={{
-                  mb: 1,
-                  p: 1,
-                  borderRadius: 1,
-                  border: '1px solid #eee',
-                  '&:hover': { backgroundColor: '#f9f9f9' }
-                }}
-              />
-            ))}
-          </RadioGroup>
-        </FormControl>
+        {currentQuestionData && (
+          <FormControl component="fieldset" sx={{ mt: 1, width: '100%' }}>
+            <RadioGroup
+              value={userAnswers[currentQuestionData._id] || ''}
+              onChange={(e) => handleAnswerChange(currentQuestionData._id, e.target.value)}
+            >
+              {currentQuestionData.options.map((option, index) => (
+                <FormControlLabel
+                  key={option._id || `opt-${index}`}
+                  value={option.text} // Assuming option.text is the value to store
+                  control={<Radio />}
+                  label={option.text}
+                  sx={{
+                    mb: 1,
+                    p: 1.5,
+                    borderRadius: 1,
+                    border: '1px solid #e0e0e0',
+                    '&:hover': { backgroundColor: '#f5f5f5' },
+                    '&.Mui-selected': { backgroundColor: '#e3f2fd', borderColor: '#90caf9' }, // Example styling for selected
+                  }}
+                />
+              ))}
+            </RadioGroup>
+          </FormControl>
+        )}
       </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4, alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4, pt:2, borderTop: '1px solid #eee' }}>
         <Button
           variant="outlined"
           onClick={handlePreviousQuestion}
-          disabled={currentQuestionIndex === 0 || testAttemptStatus === 'loading'}
+          disabled={currentQuestionIndex === 0}
         >
           Previous
         </Button>
-        <Typography>
-          Marked for Review: {markedForReviewCount}
-        </Typography>
-        {currentQuestionIndex < currentExamDetails.questions.length - 1 ? (
-          <Button variant="contained" onClick={handleNextQuestion} disabled={testAttemptStatus === 'loading'}>
-            Next
-          </Button>
-        ) : (
-          <Button variant="contained" color="success" onClick={handleSubmit} disabled={testAttemptStatus === 'loading' || isTestSubmitted}>
-            {testAttemptStatus === 'loading' ? <CircularProgress size={24} /> : 'Submit Test'}
-          </Button>
-        )}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit}
+          disabled={testAttemptStatus === 'loading'}
+        >
+          {testAttemptStatus === 'loading' ? <CircularProgress size={24}/> : 'Submit Test'}
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={handleNextQuestion}
+          disabled={!currentExamDetails || currentQuestionIndex >= currentExamDetails.questions.length - 1}
+        >
+          Next
+        </Button>
       </Box>
     </StyledPaper>
   );

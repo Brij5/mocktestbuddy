@@ -5,7 +5,8 @@ import {
   getProgressByCategory,
   getProgressBySubject,
   updateProgress,
-  getUserAchievements
+  getUserAchievements,
+  submitTestAttempt
 } from '../../controllers/progress/progressController.js';
 import { protect } from '../../middleware/auth/authMiddleware.js';
 
@@ -35,5 +36,10 @@ router
 router
   .route('/achievements')
   .get(protect, getUserAchievements);
+
+// Route to submit a test attempt
+router
+  .route('/submit-attempt')
+  .post(protect, submitTestAttempt);
 
 export default router;

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { requestPasswordReset, clearAuthMessages } from '../store/slices/authSlice';
+import { requestPasswordReset, clearAuthMessages } from '../../store/slices/authSlice';
 import {
   Typography,
   Alert,
@@ -107,7 +107,7 @@ const ForgotPasswordPage = () => {
           {loading ? <CircularProgress size={24} /> : 'Send Reset Instructions'}
         </Button>
         <Grid container justifyContent="flex-end">
-          <Grid item>
+          <Grid>
             <Link component={RouterLink} to="/login" variant="body2">
               Back to Sign In
             </Link>

@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2025-05-14
+
+### Fixed
+- Authentication token not being sent with API requests
+- Category management API integration
+- Admin dashboard API endpoints
+
+### Added
+- Centralized Axios instance with request/response interceptors
+- Proper error handling for 401 Unauthorized responses
+- Token management in authentication flow
+
+## [0.1.0] - 2024-07-26
+
 ### Added
 - Project initialization with basic structure
 - Authentication system with JWT

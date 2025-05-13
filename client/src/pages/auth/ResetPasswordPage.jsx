@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { resetPassword, clearAuthMessages } from '../store/slices/authSlice';
+import { resetPassword, clearAuthMessages } from '../../store/slices/authSlice';
 import {
   // Container, // Removed unused import
   Typography,
@@ -157,7 +157,7 @@ const ResetPasswordPage = () => {
       {/* Show link to login only after success */}
       {resetSuccessMessage && (
         <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
-          <Grid item>
+          <Grid>
             <Link component={RouterLink} to="/login" variant="body2">
               Proceed to Sign In Now
             </Link>

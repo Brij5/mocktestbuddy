@@ -89,11 +89,11 @@ const TestResultPage = () => {
       <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>Summary</Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}><Typography><strong>Exam:</strong> {examName}</Typography></Grid>
-          <Grid item xs={12} sm={6}><Typography><strong>Completed:</strong> {completedDate}</Typography></Grid>
-          <Grid item xs={12} sm={6}><Typography><strong>Score:</strong> {attemptDetails.score || 0} / {attemptDetails.totalQuestions || 0}</Typography></Grid>
-          <Grid item xs={12} sm={6}><Typography><strong>Accuracy:</strong> {accuracy ? accuracy.toFixed(2) : 'N/A'}%</Typography></Grid>
-          {attemptDetails.timeTaken && <Grid item xs={12} sm={6}><Typography><strong>Time Taken:</strong> {attemptDetails.timeTaken}</Typography></Grid>}
+          <Grid xs={12} sm={6}><Typography><strong>Exam:</strong> {examName}</Typography></Grid>
+          <Grid xs={12} sm={6}><Typography><strong>Completed:</strong> {completedDate}</Typography></Grid>
+          <Grid xs={12} sm={6}><Typography><strong>Score:</strong> {attemptDetails.score || 0} / {attemptDetails.totalQuestions || 0}</Typography></Grid>
+          <Grid xs={12} sm={6}><Typography><strong>Accuracy:</strong> {accuracy ? accuracy.toFixed(2) : 'N/A'}%</Typography></Grid>
+          {attemptDetails.timeTaken && <Grid xs={12} sm={6}><Typography><strong>Time Taken:</strong> {attemptDetails.timeTaken}</Typography></Grid>}
         </Grid>
       </Paper>
 

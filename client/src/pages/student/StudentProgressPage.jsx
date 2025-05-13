@@ -19,14 +19,38 @@ import {
   Card,
   CardContent
 } from '@mui/material';
-import { fetchStudentProgressData, selectOverallProgress, selectRecentAttempts, selectProgressLoading, selectProgressError } from '../store/slices/progressSlice';
+import { 
+  fetchStudentProgressData, 
+  // selectProgressData, // Removed as it's not exported by progressSlice and not used
+  selectProgressLoading, 
+  selectProgressError 
+} from '../../store/slices/progressSlice'; // Corrected path
 import { format } from 'date-fns';
 
 const StudentProgressPage = () => {
   const dispatch = useDispatch();
 
-  const overallProgress = useSelector(selectOverallProgress);
-  const recentAttempts = useSelector(selectRecentAttempts);
+  // --- TEMPORARY PLACEHOLDER DATA --- Start
+  // Remove this section once real data is flowing from the backend
+  const placeholderRecentAttempts = [
+    { _id: 'attempt1', examName: 'Sample Exam A', completedAt: new Date(Date.now() - 86400000).toISOString(), accuracy: 85.5, score: 171, totalQuestions: 200, passed: true, examId: 'examA' },
+    { _id: 'attempt2', examName: 'Practice Test B', completedAt: new Date(Date.now() - 172800000).toISOString(), accuracy: 62.0, score: 62, totalQuestions: 100, passed: true, examId: 'examB' },
+    { _id: 'attempt3', examName: 'Sample Exam A', completedAt: new Date(Date.now() - 259200000).toISOString(), accuracy: 78.3, score: 156, totalQuestions: 200, passed: true, examId: 'examA' },
+    { _id: 'attempt4', examName: 'Mini Quiz C', completedAt: new Date(Date.now() - 345600000).toISOString(), accuracy: 90.0, score: 18, totalQuestions: 20, passed: true, examId: 'examC' },
+    { _id: 'attempt5', examName: 'Practice Test B', completedAt: new Date(Date.now() - 432000000).toISOString(), accuracy: 55.0, score: 55, totalQuestions: 100, passed: false, examId: 'examB' },
+  ];
+
+  const placeholderOverallProgress = {
+    averageAccuracy: 74.2,
+    totalStudyTime: 285, // minutes
+    examsCompleted: 5, // or calculate from unique exams in placeholderRecentAttempts
+  };
+
+  // Use placeholder data for rendering
+  const recentAttempts = placeholderRecentAttempts;
+  const overallProgress = placeholderOverallProgress;
+  // --- TEMPORARY PLACEHOLDER DATA --- End
+
   const loading = useSelector(selectProgressLoading);
   const error = useSelector(selectProgressError);
 
@@ -60,34 +84,34 @@ const StudentProgressPage = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 3 }}>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h4" gutterBottom component="h1">
         My Progress Overview
       </Typography>
 
       {/* Overall Progress Stats */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid xs={12} sm={4}>
+        <Grid>
           <Card sx={{height: '100%'}}>
             <CardContent>
               <Typography variant="h6" color="text.secondary">Exams Completed</Typography>
-              <Typography variant="h3">{overallProgress?.examsCompleted || 0}</Typography>
+              <Typography variant="h3">{overallProgress.examsCompleted || 0}</Typography>
             </CardContent>
           </Card>
         </Grid>
-        <Grid xs={12} sm={4}>
+        <Grid>
           <Card sx={{height: '100%'}}>
             <CardContent>
               <Typography variant="h6" color="text.secondary">Average Accuracy</Typography>
-              <Typography variant="h3">{(overallProgress?.averageAccuracy || 0).toFixed(1)}%</Typography>
+              <Typography variant="h3">{(overallProgress.averageAccuracy || 0).toFixed(1)}%</Typography>
             </CardContent>
           </Card>
         </Grid>
-        <Grid xs={12} sm={4}>
+        <Grid>
           <Card sx={{height: '100%'}}>
             <CardContent>
               <Typography variant="h6" color="text.secondary">Total Study Time</Typography>
-              <Typography variant="h3">{overallProgress?.totalStudyTime || 0} Hours</Typography>
+              <Typography variant="h3">{overallProgress.totalStudyTime || 0} Hours</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -116,7 +140,7 @@ const StudentProgressPage = () => {
                 {recentAttempts.map((attempt) => (
                   <TableRow hover key={attempt._id}>
                     <TableCell component="th" scope="row">
-                      {attempt.exam?.name || attempt.examName || 'N/A'}
+                      {attempt.examName || 'N/A'}
                     </TableCell>
                     <TableCell align="right">
                       {attempt.completedAt ? format(new Date(attempt.completedAt), 'PP') : 'N/A'}
